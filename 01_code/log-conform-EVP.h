@@ -144,7 +144,7 @@ scalar mytauqq[];
 
 (const) scalar trA = zeroc;
 scalar solidreg;          // [-1,1] := -1 indicates un-yielded and 1 indicates yielded
-double solidthresh=1e-6; // Yield-surface is plotted when K > solidthresh, where K is the switch-term; One could essentially set this to 0 to 0.001
+double solidthresh=1e-4; // Yield-surface is plotted when K > solidthresh, where K is the switch-term; One could essentially set this to 0 to 0.001 (threshold value for refinement)
 
 event defaults (i = 0) {
   if (is_constant (a.x))
@@ -506,7 +506,7 @@ event tracer_advection (i++)
           solidreg[]=1.0; // Yielded region
       }
       else { 
-          solidreg[]=0.0;
+          solidreg[]=-1.0;
       }
 
 //// EVP non-exponential version      
@@ -557,6 +557,15 @@ event tracer_advection (i++)
 #endif
       foreach_dimension()
 	     tau_p.x.x[] = fa*(nu*A.x.x - 1.);
+	     
+      scalar tt = mytaup.x.x;
+      scalar ttt = mytaup.x.y;
+      scalar tttt = mytaup.y.y;
+      scalar ttttt = mytauqq;
+      tt[] = tau_p.x.x[];
+      ttt[] = tau_p.x.y[];
+      tttt[] = tau_p.y.y[];
+      ttttt[] = tau_qq[];
 
     }
   }
