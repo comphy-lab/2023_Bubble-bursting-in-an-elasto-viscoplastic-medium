@@ -2,19 +2,16 @@
 
 This repository contains the code and supplementary material for the article titled _Bubble bursting in an elastoviscoplastic medium_.
 
-You are free to use the code or data. For the use of same in scientific communications, we request you to cite our article as:
+You are free to use the code or data. For the use of the same in scientific communications, we request you to cite our article as:
 
 ```
 @article{xxx,
-    title={Bubble bursting in an elastoviscoplastic medium},
-    volume={yyy},
-    DOI={10.10/xxx,
-    journal={arXiv},
-    publisher={arXiv},
-    author={Us},
-    year={2024},
-    pages={That_one}}
+    title={Bubble bursting in an elasto-viscoplastic medium},
+    journal={arXiv Preprint arXiv:2409.14897},
+    author={Balasubramanian, A.G., Sanjay, V., Jalaal, M., Vinuesa, R., Tammisola, O.},
+    year={2024}
 ```
+The article can be found at: [![](https://img.shields.io/badge/arXiv-4b4b4b?style=flat&logo=arxiv&link=https://arxiv.org/pdf/2409.14897.pdf)](https://arxiv.org/pdf/2409.14897.pdf)
 
 ## Data request
 
