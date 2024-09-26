@@ -5,11 +5,12 @@ This repository contains the code and supplementary material for the article tit
 You are free to use the code or data. For the use of the same in scientific communications, we request you to cite our article as:
 
 ```
-@article{xxx,
+@article{balasubramanian2024bursting,
     title={Bubble bursting in an elasto-viscoplastic medium},
     journal={arXiv Preprint arXiv:2409.14897},
     author={Balasubramanian, A.G., Sanjay, V., Jalaal, M., Vinuesa, R., Tammisola, O.},
     year={2024}
+}
 ```
 The article can be found at: [![](https://img.shields.io/badge/arXiv-4b4b4b?style=flat&logo=arxiv&link=https://arxiv.org/pdf/2409.14897.pdf)](https://arxiv.org/pdf/2409.14897.pdf)
 
