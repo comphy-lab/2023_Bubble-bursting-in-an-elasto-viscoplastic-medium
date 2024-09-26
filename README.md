@@ -1,6 +1,6 @@
 ## Bubble bursting in an elasto-viscoplastic medium ##
 
-This repository contains the code and supplementary material for the article titled _Bubble bursting in an elastoviscoplastic medium_.
+This repository contains the code and supplementary material for the article titled _Bubble bursting in an elasto-viscoplastic medium_.
 
 You are free to use the code or data. For the use of the same in scientific communications, we request you to cite our article as:
 
