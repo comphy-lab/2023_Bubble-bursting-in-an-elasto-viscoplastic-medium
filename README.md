@@ -6,13 +6,17 @@ You are free to use the code or data. For the use of the same in scientific comm
 
 ```
 @article{balasubramanian2024bursting,
-    title={Bubble bursting in an elasto-viscoplastic medium},
-    journal={arXiv Preprint arXiv:2409.14897},
-    author={Balasubramanian, A.G., Sanjay, V., Jalaal, M., Vinuesa, R., Tammisola, O.},
-    year={2024}
+  title={Bubble bursting in an elasto-viscoplastic medium},
+  journal={Journal of Fluid Mechanics},
+  author={Balasubramanian, A.G., Sanjay, V., Jalaal, M., Vinuesa, R., Tammisola, O.},
+  volume={1001},
+  pages={A9},
+  year={2024},
+  publisher={Cambridge University Press}
 }
 ```
-The article can be found at: [![](https://img.shields.io/badge/arXiv-4b4b4b?style=flat&logo=arxiv&link=https://arxiv.org/pdf/2409.14897.pdf)](https://arxiv.org/pdf/2409.14897.pdf)
+The article can be found at: [![](https://img.shields.io/badge/DOI-0074ce?logo=doi&link=https://doi.org/10.1017/jfm.2024.1073)](https://doi.org/10.1017/jfm.2024.1073)
+ [![](https://img.shields.io/badge/arXiv-4b4b4b?style=flat&logo=arxiv&link=https://arxiv.org/pdf/2409.14897.pdf)](https://arxiv.org/pdf/2409.14897.pdf)
 
 ## Data request
 
