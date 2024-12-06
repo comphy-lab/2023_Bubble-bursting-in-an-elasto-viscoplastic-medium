@@ -1,5 +1,57 @@
 /**
-## The log-conformation method for some viscoelastic constitutive models
+## The log-conformation method for elasto-viscoplastic constitutive models
+
+## Extensions for Elasto-Viscoplastic Materials (changes documented here!)
+
+-- Follow the #EVP tag in the code for changes.
+
+The original implementation has been extended to handle elasto-viscoplastic (EVP) materials. These materials combine elastic, viscous, and plastic behaviors, exhibiting a yield stress $\tau_0$ below which they behave as elastic solids. Above this threshold, they flow like viscous fluids.
+
+### New Parameters and Variables
+
+The polymeric stress tensor now includes additional parameters for EVP behavior:
+- `tau0`: The yield stress threshold
+- `solidthresh`: Numerical threshold for identifying yielded regions (typically 1e-4)
+- `solidreg`: A field marking yielded (-1) and unyielded (1) regions
+
+The constitutive functions $\mathbf{f_s}$ and $\mathbf{f_r}$ have been extended to include the full stress state:
+
+```c
+void (* f_s) (double trA, double txx, double txy, double tyy, double tqq, 
+              double tau0, double * nu, double * eta);
+void (* f_r) (double trA, double txx, double txy, double tyy, double tqq, 
+              double tau0, double * nu, double * eta);
+```
+
+where `txx`, `txy`, `tyy` represent components of the stress tensor, and `tqq` is the additional normal stress component in axisymmetric coordinates.
+
+### Numerical Implementation
+
+The numerical scheme now maintains two copies of the stress tensor:
+- `tau_p`: The working copy used during iterations
+- `mytaup`: A reference copy preserving values between iterations
+
+Two time integration schemes are available for the EVP model:
+
+1. Non-exponential scheme:
+$$
+\mathbf{A}_{n+1} = \mathbf{A}_n - \frac{\eta \Delta t}{\lambda} \mathbf{A}_n
+$$
+
+2. Exponential scheme:
+$$
+\mathbf{A}_{n+1} = \exp(-\frac{\eta \Delta t}{\lambda}) \mathbf{A}_n + 
+                    (1-\exp(-\frac{\eta \Delta t}{\lambda})) \mathbf{I}
+$$
+
+The yielding behavior is tracked using the parameter $\eta$ returned by the constitutive functions:
+```c
+if (eta > solidthresh) {
+    solidreg[] = 1.0;  // Yielded region
+} else {
+    solidreg[] = -1.0; // Unyielded region
+}
+```
 
 ## Introduction
 
@@ -69,7 +121,10 @@ solver](navier-stokes/centered.h). */
 /**
 Constitutive models other than Oldroyd-B (the default) are defined
 through the two functions $\mathbf{f}_s (\mathbf{A})$ and
-$\mathbf{f}_r (\mathbf{A})$. */
+$\mathbf{f}_r (\mathbf{A})$. 
+
+#EVP: For Saramito model, notice the additional inputs. 
+*/
 
 void (* f_s) (double, double, double, double, double, double, double *, double *) = NULL;
 void (* f_r) (double, double, double, double, double, double, double *, double *) = NULL;
@@ -662,5 +717,6 @@ event acceleration (i++)
 
 ## See also
 
-* [Functions $f_s$ and $f_r$ for the FENE-P model](fene-p.h)
+* [Functions $f_s$ and $f_r$ for the FENE-P model](fene-p.h) (in the old log-conform.h file)
+* [Functions $f_s$ and $f_r$ for the EVP model](saramito-EVP.h) (this file)
 */

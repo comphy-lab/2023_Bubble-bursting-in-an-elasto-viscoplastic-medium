@@ -1,26 +1,49 @@
+/**
+ * @file burst_evp.c
+ * @brief Simulation of two-phase elastoviscoplastic fluid flow using the log-conformation method.
+ *
+ * This simulation models the behavior of a elastoviscoplastic fluid using the Navier-Stokes equations 
+ * coupled with the Saramito model. The code employs state-of-the-art techniques, including adaptive 
+ * mesh refinement and the log-conformation method, to efficiently simulate complex fluid dynamics.
+ *
+ * @param J Plastocapillary number (command line argument 1)
+ * @param Deb Deborah number (command line argument 2)
+ * @param Bond Bond number (fixed at 0.001)
+ * @param B Solvent to total viscosity ratio (fixed at 0.5)
+ *
+ * Output files:
+ * - intermediate/snapshot-*.dat: Simulation states
+ * - timestep.txt: Time stepping data
+ * - log: Kinetic energy and diagnostics
+ */
+
 #include "axi.h"
 #include "navier-stokes/centered.h"
 #include "two-phase.h"
 #include "navier-stokes/conserving.h"
 #include "tension.h"
+
+// we modify the [log-conform.h](http://basilisk.fr/src/log-conform.h) and [fene-p.h](http://basilisk.fr/src/fene-p.h) files to implement the Saramito model:
 #include "log-conform-EVP.h"
 #include "saramito-EVP.h"
+
 #include "distance.h"
 #include "adapt_wavelet_limited.h"
 
-#define tmax 4.5
-#define LEVEL 8
-#define MAXlevel 11
-#define DT_MAX 0.0005
-#define Ldomain 8
+// Simulation parameters
+#define tmax 4.5      // Maximum simulation time
+#define LEVEL 8       // Base refinement level
+#define MAXlevel 11   // Maximum refinement level
+#define DT_MAX 0.0005 // Maximum timestep
+#define Ldomain 8     // Domain size
 
-// Error tolerancs
-#define fErr (1e-3)                                 // error tolerance in f VOF
-#define KErr (1e-4)                                 // error tolerance in curvature
-#define VelErr (1e-2)                               // error tolerances in velocity, A
-#define OmegaErr (1e-3)                             // error tolerances in vorticity
+// Error tolerances for adaptive mesh refinement
+#define fErr (1e-3)     // VOF fraction error tolerance
+#define KErr (1e-4)     // Curvature error tolerance
+#define VelErr (1e-2)   // Velocity error tolerance
+#define OmegaErr (1e-3) // Vorticity error tolerance
 
-#define tsnap (0.005)
+#define tsnap (0.005)   // Time interval for snapshots
 
 # define B 0.5 // solvent to total viscosity ratio
 
@@ -32,6 +55,14 @@ p[right] = dirichlet(0.);
 double Bond, J, Deb;
 char nameOut[80], namepng[80], dumpFile[80];
 
+/**
+ * @brief Initialize material properties and create output directories
+ * 
+ * Sets up:
+ * - Domain size and grid
+ * - Material parameters (density, viscosity, surface tension)
+ * - Output directories for intermediate results and visualizations
+ */
 int main(int argc, char const *argv[]) {
     
 L0 = Ldomain;
@@ -39,8 +70,8 @@ origin (-L0/2., 0.);
 init_grid (1 << 8);
 Bond = 0.001;
 
-J = atof(argv[1]);
-Deb = atof(argv[2]);
+J = atof(argv[1]); // Plastocapillary number
+Deb = atof(argv[2]); // Deborah number
 
 char comm[80];
 sprintf (comm, "mkdir -p intermediate");
@@ -66,19 +97,35 @@ TOLERANCE = 1e-5;
 run();
 }
 
+/**
+ * @brief Add gravitational force
+ * 
+ * Implements gravity as a body force in the negative x-direction,
+ * scaled by the Bond number.
+ */
 event acceleration (i++) {
   face vector av = a;
   foreach_face(x)
     av.x[] -= Bond;
 }
 
+/**
+ * @brief Define mesh refinement regions
+ * 
+ * Implements a region-based refinement strategy with higher resolution
+ * near the axis of symmetry:
+ * - y < 1.28: MAXlevel+2
+ * - y < 2.56: MAXlevel+1
+ * - y < 5.12: MAXlevel
+ * - otherwise: MAXlevel-1
+ */
 int refRegion(double x, double y, double z){
   return (y < 1.28 ? MAXlevel+2 : y < 2.56 ? MAXlevel+1 : y < 5.12 ? MAXlevel : MAXlevel-1);
 }
 
 event init (t = 0) {
   if (!restore (file = dumpFile)){
-
+    // read the initial shape from a data file.
     char filename[60];
     sprintf(filename,"Bo%5.4f.dat",Bond);
     FILE * fp = fopen(filename,"rb");
@@ -136,6 +183,7 @@ event end (t = end) {
   fprintf(ferr, "Done: \n");
 }
 
+// logging on the run data
 event writedt (i++)
 { static FILE * fp;
   if (i == 0) {
