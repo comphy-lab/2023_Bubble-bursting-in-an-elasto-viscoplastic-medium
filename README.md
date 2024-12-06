@@ -1,6 +1,6 @@
-# Bubble Bursting in an Elasto-Viscoplastic Medium
+# Bubble Bursting in an Elastoviscoplastic Medium
 
-This repository contains the code and supplementary material for simulating bubble bursting dynamics in an elasto-viscoplastic medium. The simulation is implemented in 2D+axi (axisymmetric) configuration using the Basilisk framework.
+This repository contains the code and supplementary material for simulating bubble bursting dynamics in an elastoviscoplastic medium. The simulation is implemented in 2D+axi (axisymmetric) configuration using the Basilisk framework.
 
 ## Publication
 
@@ -58,23 +58,22 @@ The simulation models the bursting dynamics of a bubble in an elasto-viscoplasti
   - Velocity error (VelErr): 1e-2
   - Vorticity error (OmegaErr): 1e-3
 
-## Repository Structure
+## Getting Started
 
-- `01_code/`: Source code files implementing the simulation
-- `02_videos/`: Visualization results of bubble bursting dynamics
-- `03_supplementary_plots/`: Additional figures and plots for analysis
-- `04_graphical_abstract/`: Graphical summary of the research
+### Prerequisites
+- Install the [Basilisk framework](http://basilisk.fr/src/INSTALL)
+- Ensure you have a C compiler with OpenMP support
+- Python 3.x for post-processing
 
-## Dependencies
+### Initial Configuration
+The simulation requires an initial shape file that defines the bubble geometry:
+- `Bo0.0010.dat`: Initial bubble shape for Bond number 0.001
+- Place this file in the same directory as `burst_evp.c`
+- For details of how this shape is obtained, please refer to repo: [VatsalSy/Bursting-Bubble-In-a-Viscoplastic-Medium](https://github.com/VatsalSy/Bursting-Bubble-In-a-Viscoplastic-Medium). 
 
-- Basilisk framework
-- C compiler (gcc recommended)
-- Python (for post-processing)
+### Running Simulations
 
-### Local Execution of the code
-
-To compile and run the code locally:
-
+1. Compile the code with OpenMP support:
 ```bash
 # Compile the code
 qcc -O2 -Wall -disable-dimensions -fopenmp burst_evp.c -o burst_evp -lm
@@ -82,9 +81,28 @@ qcc -O2 -Wall -disable-dimensions -fopenmp burst_evp.c -o burst_evp -lm
 # Set the number of OpenMP threads
 export OMP_NUM_THREADS=4
 
-# Run the executable
-./burst_evp
+# Run the executable with Plastocapillary (J) and Deborah (Deb) numbers
+./burst_evp 1.0 0.5  # Example: J=1.0, Deb=0.5
 ```
+
+## Outputs
+
+### Output Files
+
+The simulation generates several output files:
+- `intermediate/snapshot-*.dat`: Simulation state at regular intervals
+- `timestep.txt`: Time stepping information
+- `log`: Contains kinetic energy and other diagnostic data
+- `01_pp/png/`: Directory for PNG output files
+- `01_pp/pdf/`: Directory for PDF output files
+
+## Visualization and Post-processing
+
+The repository includes supplementary materials:
+- `02_videos/`: Contains 66 videos showing bubble dynamics
+- `03_supplementary_plots/`: 79 plots analyzing various aspects
+- `04_graphical_abstract/`: Visual summary of key findings
+
 
 ## Contact
 
