@@ -1,10 +1,23 @@
+/**
+	•	@file burst_evp.c
+	•	@brief Simulation of two-phase elastoviscoplastic fluid flow using the log-conformation method.
+
+	•	This simulation models the behavior of a elastoviscoplastic fluid using the Navier-Stokes equations coupled with the Saramito model.
+	
+  The code employs state-of-the-art techniques, including adaptive mesh refinement and the log-conformation method, to efficiently simulate complex fluid dynamics.
+*/
+
+
 #include "axi.h"
 #include "navier-stokes/centered.h"
 #include "two-phase.h"
 #include "navier-stokes/conserving.h"
 #include "tension.h"
+
+// we modify the [log-conform.h](http://basilisk.fr/src/log-conform.h) and [fene-p.h](http://basilisk.fr/src/fene-p.h) files to implement the Saramito model:
 #include "log-conform-EVP.h"
 #include "saramito-EVP.h"
+
 #include "distance.h"
 #include "adapt_wavelet_limited.h"
 
@@ -39,8 +52,8 @@ origin (-L0/2., 0.);
 init_grid (1 << 8);
 Bond = 0.001;
 
-J = atof(argv[1]);
-Deb = atof(argv[2]);
+J = atof(argv[1]); // Plastocapillary number
+Deb = atof(argv[2]); // Deborah number
 
 char comm[80];
 sprintf (comm, "mkdir -p intermediate");
@@ -66,19 +79,21 @@ TOLERANCE = 1e-5;
 run();
 }
 
+// gravity is added as a body force
 event acceleration (i++) {
   face vector av = a;
   foreach_face(x)
     av.x[] -= Bond;
 }
 
+// a region-based refinement criterion is used to refine very close to the axis of symmetry. 
 int refRegion(double x, double y, double z){
   return (y < 1.28 ? MAXlevel+2 : y < 2.56 ? MAXlevel+1 : y < 5.12 ? MAXlevel : MAXlevel-1);
 }
 
 event init (t = 0) {
   if (!restore (file = dumpFile)){
-
+    // read the initial shape from a data file.
     char filename[60];
     sprintf(filename,"Bo%5.4f.dat",Bond);
     FILE * fp = fopen(filename,"rb");
@@ -136,6 +151,7 @@ event end (t = end) {
   fprintf(ferr, "Done: \n");
 }
 
+// logging on the run data
 event writedt (i++)
 { static FILE * fp;
   if (i == 0) {
